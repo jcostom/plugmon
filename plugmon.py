@@ -5,7 +5,7 @@ import time
 import requests
 from pyvesync import VeSync
 
-EMAIL = os.getenv('USERID')
+EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
 TZ = os.getenv('TZ', 'America/New_York')
 DEVID = os.getenv('DEVID', 0)
@@ -22,7 +22,7 @@ def triggerWebHook():
         "with/key",
         IFTTTKEY)
     )
-    headers = {'User-Agent': 'plugmon.py v0.3'}
+    headers = {'User-Agent': 'plugmon.py v0.4'}
     response = requests.get(updateURL, headers=headers)
     print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " IFTTT Response: {}".format(response.text))
 
