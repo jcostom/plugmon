@@ -3,6 +3,8 @@ FROM alpine:3.12
 ARG BUILD_DATE
 ARG VCS_REF
 
+ENV TZ=America/New_York
+
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.vcs-url="https://github.com/jcostom/dnsomatic-update.git" \
       org.label-schema.vcs-ref=$VCS_REF \
@@ -11,7 +13,8 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 RUN \
     apk add --no-cache tzdata py3-requests py3-pip \
     && rm -rf /var/cache/apk/* \
-    && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+    && cp /usr/share/zoneinfo/$TZ /etc/localtime \
+    && echo $TZ > /etc/timezone \
     && pip install pyvesync
 
 RUN mkdir /app
