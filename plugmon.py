@@ -24,9 +24,9 @@ def triggerWebHook():
         "with/key",
         IFTTTKEY)
     )
-    headers = {'User-Agent': 'plugmon.py v0.8.1'}
+    headers = {'User-Agent': 'plugmon.py v0.9'}
     response = requests.get(webHookURL, headers=headers)
-    print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " IFTTT Response: {}".format(response.text))
+    print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " IFTTT Response: {}".format(response.text))
 
 def main():
     manager = VeSync(EMAIL, PASSWORD, TZ)
@@ -41,17 +41,17 @@ def main():
         mysw_power = float(mysw.details.get('power',0))
         if IS_RUNNING == 0:
             if mysw_power > ONPOWER:
-                print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer changed from stopped to running: {}".format(mysw_power))
+                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer changed from stopped to running: {}".format(mysw_power))
                 IS_RUNNING = 1
             else:
-                print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer remains stopped: {}".format(mysw_power))
+                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer remains stopped: {}".format(mysw_power))
         else:
             if mysw_power < OFFPOWER:
-                print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer changed from running to stopped: {}".format(mysw_power))
+                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer changed from running to stopped: {}".format(mysw_power))
                 triggerWebHook()
                 IS_RUNNING = 0
             else:
-                print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer remains running: {}".format(mysw_power))
+                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer remains running: {}".format(mysw_power))
 
         time.sleep(INTERVAL)
 
