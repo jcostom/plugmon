@@ -8,7 +8,7 @@ from pyvesync import VeSync
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
 TZ = os.getenv('TZ', 'America/New_York')
-DEVID = os.getenv('DEVID', 0)
+DEVID = int(os.getenv('DEVID', 0))
 IFTTTKEY = os.getenv('IFTTTKEY')
 IFTTTWEBHOOK = os.getenv('IFTTTWEBHOOK')
 
