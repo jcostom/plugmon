@@ -19,4 +19,4 @@ RUN mkdir /app
 COPY ./plugmon.py /app
 RUN chmod 755 /app/plugmon.py
 
-ENTRYPOINT [ "/app/plugmon.py" ]
+ENTRYPOINT [ "python3", "-u", "/app/plugmon.py" ]
