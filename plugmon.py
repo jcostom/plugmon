@@ -22,7 +22,7 @@ def triggerWebHook():
         "with/key",
         IFTTTKEY)
     )
-    headers = {'User-Agent': 'plugmon.py v0.6.1'}
+    headers = {'User-Agent': 'plugmon.py v0.7'}
     response = requests.get(webHookURL, headers=headers)
     print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " IFTTT Response: {}".format(response.text))
 
@@ -35,13 +35,15 @@ def main():
         manager.update()
         manager.update_energy()
         mysw_power = float(mysw.details.get('power',0))
-        if mysw_power > 0.5:
-            print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer is running: {}".format(mysw_power))
-            IS_RUNNING = 1
+        if IS_RUNNING == 0:
+            if mysw_power > 0.5:
+                print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer is running: {}".format(mysw_power))
+                IS_RUNNING = 1
         else:
-            print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer is stopped: {}".format(mysw_power))
-            triggerWebHook()
-            IS_RUNNING = 0
+            if mysw_power < 0.2:
+                print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer is stopped: {}".format(mysw_power))
+                triggerWebHook()
+                IS_RUNNING = 0
 
         time.sleep(INTERVAL)
 
