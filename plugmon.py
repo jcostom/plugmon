@@ -9,6 +9,9 @@ EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
 TZ = os.getenv('TZ', 'America/New_York')
 DEVID = int(os.getenv('DEVID', 0))
+OFFPOWER = float(os.getenv('OFFPOWER', 0.2))
+ONPOWER = float(os.getenv('ONPOWER', 0.8))
+
 IFTTTKEY = os.getenv('IFTTTKEY')
 IFTTTWEBHOOK = os.getenv('IFTTTWEBHOOK')
 
@@ -21,7 +24,7 @@ def triggerWebHook():
         "with/key",
         IFTTTKEY)
     )
-    headers = {'User-Agent': 'plugmon.py v0.8'}
+    headers = {'User-Agent': 'plugmon.py v0.8.1'}
     response = requests.get(webHookURL, headers=headers)
     print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " IFTTT Response: {}".format(response.text))
 
@@ -37,13 +40,13 @@ def main():
         manager.update_energy()
         mysw_power = float(mysw.details.get('power',0))
         if IS_RUNNING == 0:
-            if mysw_power > 0.5:
+            if mysw_power > ONPOWER:
                 print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer changed from stopped to running: {}".format(mysw_power))
                 IS_RUNNING = 1
             else:
                 print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer remains stopped: {}".format(mysw_power))
         else:
-            if mysw_power < 0.2:
+            if mysw_power < OFFPOWER:
                 print(time.strftime("[%d %b %Y %H:%M:%S]", time.localtime()) + " Washer changed from running to stopped: {}".format(mysw_power))
                 triggerWebHook()
                 IS_RUNNING = 0
