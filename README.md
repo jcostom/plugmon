@@ -2,6 +2,7 @@
 
 [![Docker Stars](https://img.shields.io/docker/stars/jcostom/plugmon.svg)](https://hub.docker.com/r/jcostom/plugmon/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/jcostom/plugmon.svg)](https://hub.docker.com/r/jcostom/plugmon/)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon?ref=badge_shield)
 
 Lightweight python-based monitoring Etekcity Smart Plug via the VeSync API and activating an IFTTT webhook that triggers sending a Telegram message.
 
@@ -46,3 +47,7 @@ The OFFPOWER and ONPOWER values are the high and low watermarks in Watts to acti
 | IFTTTKEY | [EMPTY] | YES! |
 | IFTTTWEBHOOK | [EMPTY] | YES! |
 | INTERVAL (in seconds) | 300 | NO |
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon?ref=badge_large)
