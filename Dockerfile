@@ -15,7 +15,7 @@ RUN \
     && rm -rf /var/cache/apk/* \
     && cp /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone \
-    && pip install pyvesync
+    && pip install pyvesync_v2
 
 RUN mkdir /app
 COPY ./plugmon.py /app

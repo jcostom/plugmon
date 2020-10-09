@@ -3,7 +3,7 @@
 import os
 import time
 import requests
-from pyvesync import VeSync
+from pyvesync_v2 import VeSync
 
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
