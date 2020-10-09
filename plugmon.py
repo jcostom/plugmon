@@ -24,7 +24,7 @@ def triggerWebHook():
         "with/key",
         IFTTTKEY)
     )
-    headers = {'User-Agent': 'plugmon.py v1.0'}
+    headers = {'User-Agent': 'plugmon.py v1.1'}
     response = requests.get(webHookURL, headers=headers)
     print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " IFTTT Response: {}".format(response.text))
 
