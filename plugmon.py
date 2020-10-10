@@ -19,6 +19,8 @@ IFTTTWEBHOOK = os.getenv('IFTTTWEBHOOK')
 INTERVAL = os.getenv('INTERVAL', 300)
 TRACEID = random.uniform(0, 1)
 
+VER = 'plugmon.py v1.5'
+
 def findDeviceID(deviceName, email, md5pass, tz, traceid):
     # First fetch token & accountID
     headers = { 'content-type': 'application/json' }
@@ -60,10 +62,10 @@ def findDeviceID(deviceName, email, md5pass, tz, traceid):
     list = r.json()['result']['list']
 
     for i in range(len(list)):
-    if list[i]['deviceName'] == devName:
-        devID = i
-        break
-    
+        if list[i]['deviceName'] == devName:
+            devID = i
+            break
+
     return(devID)
 
 def triggerWebHook():
@@ -73,7 +75,7 @@ def triggerWebHook():
         "with/key",
         IFTTTKEY)
     )
-    headers = {'User-Agent': 'plugmon.py v1.5'}
+    headers = {'User-Agent': VER }
     r = requests.get(webHookURL, headers=headers)
     print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " IFTTT Response: {}".format(r.text))
 
