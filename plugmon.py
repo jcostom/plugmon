@@ -80,7 +80,7 @@ def triggerWebHook():
     print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " IFTTT Response: {}".format(r.text))
 
 def main():
-    DEVID = findDeviceID(DEVICENAME, EMAIL, MD5PASSWORD, TZ, TRACEID)
+    DEVID = findDeviceID(DEVNAME, EMAIL, MD5PASSWORD, TZ, TRACEID)
 
     # Now, get down to business, finally.
     # Hey VeSync gang - give us a way to directly access
