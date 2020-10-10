@@ -21,7 +21,7 @@ TRACEID = random.uniform(0, 1)
 
 VER = 'plugmon.py v1.5'
 
-def findDeviceID(deviceName, email, md5pass, tz, traceid):
+def findDeviceID(devName, email, md5pass, tz, traceid):
     # First fetch token & accountID
     headers = { 'content-type': 'application/json' }
     body = {
