@@ -79,7 +79,7 @@ def triggerWebHook():
     r = requests.get(webHookURL, headers=headers)
     writeLogEntry("IFTTT Response", r.text)
 
-def writeLogEntry(entry, status):
+def writeLogEntry(message, status):
     print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " {}: {}".format(message, status))
 
 def main():
