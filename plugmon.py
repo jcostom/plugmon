@@ -19,7 +19,7 @@ IFTTTWEBHOOK = os.getenv('IFTTTWEBHOOK')
 INTERVAL = os.getenv('INTERVAL', 300)
 TRACEID = random.uniform(0, 1)
 
-VER = 'plugmon.py v1.5'
+VER = 'plugmon.py v1.6'
 
 def findDeviceID(devName, email, md5pass, tz, traceid):
     # First fetch token & accountID
@@ -77,9 +77,13 @@ def triggerWebHook():
     )
     headers = {'User-Agent': VER }
     r = requests.get(webHookURL, headers=headers)
-    print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " IFTTT Response: {}".format(r.text))
+    writeLogEntry("IFTTT Response", r.text)
+
+def writeLogEntry(entry, status):
+    print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " {}: {}".format(message, status))
 
 def main():
+    writeLogEntry('Initiated', '')
     DEVID = findDeviceID(DEVNAME, EMAIL, MD5PASSWORD, TZ, TRACEID)
 
     # Now, get down to business, finally.
@@ -89,6 +93,8 @@ def main():
     manager = VeSync(EMAIL, PASSWORD, TZ)
     manager.login()
     manager.update()
+    writeLogEntry('Connected', 'update succeeded.')
+
     mysw = manager.outlets[DEVID]
     IS_RUNNING = 0
 
@@ -98,17 +104,17 @@ def main():
         mysw_power = float(mysw.details.get('power',0))
         if IS_RUNNING == 0:
             if mysw_power > ONPOWER:
-                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer changed from stopped to running: {}".format(mysw_power))
+                writeLogEntry('Washer changed from stopped to running', mysw_power)
                 IS_RUNNING = 1
             else:
-                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer remains stopped: {}".format(mysw_power))
+                writeLogEntry('Washer remains stopped', mysw_power)
         else:
             if mysw_power < OFFPOWER:
-                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer changed from running to stopped: {}".format(mysw_power))
+                writeLogEntry('Washer changed from running to stopped', mysw_power)
                 triggerWebHook()
                 IS_RUNNING = 0
             else:
-                print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " Washer remains running: {}".format(mysw_power))
+                writeLogEntry('Washer remains running', mysw_power)
 
         time.sleep(INTERVAL)
 
