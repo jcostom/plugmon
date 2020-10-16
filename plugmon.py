@@ -70,7 +70,7 @@ def main():
         'Connection': 'keep-alive',
         'Accept-Language': 'en',
         'accountId': ACCOUNTID,
-        'appVersion': '1.0',
+        'appVersion': VER,
         'tk': TOKEN,
         'tz': TZ,
         'traceid': TRACEID
