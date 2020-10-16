@@ -18,8 +18,8 @@ Each plug device has a unique identifier (the UUID). This is how we identify whi
 docker run \
     --rm \
     --user=1000:1000 \
-    -e EMAIL='jcostom@jasons.org' \
-    -e PASSWORD='7i4yj)capcP' \
+    -e EMAIL='Your VeSync Email' \
+    -e PASSWORD='Your VeSync Password' \
     -e TZ='America/New_York' \
     --entrypoint /app/finduuid.py \
     jcostom/plugmon
