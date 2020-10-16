@@ -5,6 +5,7 @@ import time
 import requests
 import random
 import hashlib
+import json
 
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
@@ -36,7 +37,7 @@ def writeLogEntry(message, status):
     print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " {}: {}".format(message, status))
 
 def loginAPI(email, md5pass, tz, traceid):
-    headers = { 'Content-Type': 'application/json' }
+    headers = { 'Content-Type': 'application/json', 'User-Agent': USER_AGENT }
     body = {
         "timeZone": tz, 
         "acceptLanguage": "en", 
@@ -56,10 +57,27 @@ def loginAPI(email, md5pass, tz, traceid):
     token = r.json()['result']['token']
     return([accountID, token])
 
+def turnSwitchOn(accountID, token, tz, traceid):
+    url = "https://smartapi.vesync.com/10a/v1/device/devicestatus"
+    headers = { 'Content-Type': 'application/json', 'User-Agent': USER_AGENT }
+    body = {
+       'accountID': accountID,
+       'timeZone': tz,
+       'token': token,
+       'status': 'on',
+       'uuid': UUID,
+       'traceId': traceid
+    }
+    r = requests.put(url, headers=headers, data=json.dumps(body))
+
 
 def main():
     writeLogEntry('Initiated', '')
     [ACCOUNTID, TOKEN] = loginAPI(EMAIL, MD5PASSWORD, TZ, TRACEID)
+
+    # Make sure the switch is on!
+    turnSwitchOn(ACCOUNTID, TOKEN, TZ, TRACEID)
+    
     IS_RUNNING = 0
 
     headers = {
