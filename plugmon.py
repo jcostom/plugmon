@@ -69,6 +69,8 @@ def turnSwitchOn(accountID, token, tz, traceid):
        'traceId': traceid
     }
     r = requests.put(url, headers=headers, data=json.dumps(body))
+    if r.json()['code'] == 0:
+        writeLogEntry('Plug turned on', '')
 
 
 def main():
