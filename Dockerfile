@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM python:slim
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -11,11 +11,8 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.schema-version="1.0.0"
 
 RUN \
-    apk add --no-cache tzdata py3-requests py3-pip \
-    && rm -rf /var/cache/apk/* \
-    && cp /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone \
-    && pip install pyvesync_v2
+    pip install requests \
+    && pip install pyvesync
 
 RUN mkdir /app
 COPY ./plugmon.py /app

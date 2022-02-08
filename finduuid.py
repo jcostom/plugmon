@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from pyvesync_v2 import VeSync
+from pyvesync import VeSync
 
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')

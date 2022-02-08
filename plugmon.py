@@ -19,7 +19,7 @@ IFTTTWEBHOOK = os.getenv('IFTTTWEBHOOK')
 INTERVAL = os.getenv('INTERVAL', 300)
 TRACEID = str(random.uniform(1, 1000000000))
 
-VER = "2.2"
+VER = "2.5"
 USER_AGENT = "plugmon.py/" + VER
 
 def triggerWebHook():
