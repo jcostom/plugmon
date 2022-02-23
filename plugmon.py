@@ -19,36 +19,40 @@ IFTTTWEBHOOK = os.getenv('IFTTTWEBHOOK')
 INTERVAL = os.getenv('INTERVAL', 300)
 TRACEID = str(random.uniform(1, 1000000000))
 
-VER = "2.5"
+VER = "2.6"
 USER_AGENT = "plugmon.py/" + VER
+
 
 def triggerWebHook():
     webHookURL = "/".join(
         ("https://maker.ifttt.com/trigger",
-        IFTTTWEBHOOK,
-        "with/key",
-        IFTTTKEY)
+         IFTTTWEBHOOK,
+         "with/key",
+         IFTTTKEY)
     )
-    headers = {'User-Agent': USER_AGENT }
+    headers = {'User-Agent': USER_AGENT}
     r = requests.get(webHookURL, headers=headers)
     writeLogEntry("IFTTT Response", r.text)
 
+
 def writeLogEntry(message, status):
-    print(time.strftime("[%d %b %Y %H:%M:%S %Z]", time.localtime()) + " {}: {}".format(message, status))
+    print(time.strftime("[%d %b %Y %H:%M:%S %Z]",
+          time.localtime()) + " {}: {}".format(message, status))
+
 
 def loginAPI(email, md5pass, tz, traceid):
-    headers = { 'Content-Type': 'application/json', 'User-Agent': USER_AGENT }
+    headers = {'Content-Type': 'application/json', 'User-Agent': USER_AGENT}
     body = {
-        "timeZone": tz, 
-        "acceptLanguage": "en", 
-        "appVersion": VER, 
-        "traceId": traceid, 
-        "phoneBrand": "HappyFunBall", 
-        "phoneOS": "HappyFunOS", 
-        "email": email, 
-        "password": md5pass, 
-        "devToken": "", 
-        "userType": "1", 
+        "timeZone": tz,
+        "acceptLanguage": "en",
+        "appVersion": VER,
+        "traceId": traceid,
+        "phoneBrand": "HappyFunBall",
+        "phoneOS": "HappyFunOS",
+        "email": email,
+        "password": md5pass,
+        "devToken": "",
+        "userType": "1",
         "method": "login"
     }
     url = "https://smartapi.vesync.com/cloud/v1/user/login"
@@ -57,9 +61,10 @@ def loginAPI(email, md5pass, tz, traceid):
     token = r.json()['result']['token']
     return([accountID, token])
 
+
 def turnSwitchOn(accountID, token, tz, traceid):
     url = "https://smartapi.vesync.com/10a/v1/device/devicestatus"
-    headers = { 'Content-Type': 'application/json', 'User-Agent': USER_AGENT }
+    headers = {'Content-Type': 'application/json', 'User-Agent': USER_AGENT}
     body = {
        'accountID': accountID,
        'timeZone': tz,
@@ -79,7 +84,7 @@ def main():
 
     # Make sure the switch is on!
     turnSwitchOn(ACCOUNTID, TOKEN, TZ, TRACEID)
-    
+
     IS_RUNNING = 0
 
     headers = {
@@ -98,8 +103,8 @@ def main():
 
     url = "/".join(
         ("https://smartapi.vesync.com/v1/device",
-        UUID,
-        "detail")
+         UUID,
+         "detail")
     )
 
     while True:
@@ -107,13 +112,15 @@ def main():
         mysw_power = float(r.json()['power'])
         if IS_RUNNING == 0:
             if mysw_power > ONPOWER:
-                writeLogEntry('Washer changed from stopped to running', mysw_power)
+                writeLogEntry('Washer changed from stopped to running',
+                              mysw_power)
                 IS_RUNNING = 1
             else:
                 writeLogEntry('Washer remains stopped', mysw_power)
         else:
             if mysw_power < OFFPOWER:
-                writeLogEntry('Washer changed from running to stopped', mysw_power)
+                writeLogEntry('Washer changed from running to stopped',
+                              mysw_power)
                 triggerWebHook()
                 IS_RUNNING = 0
             else:

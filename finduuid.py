@@ -13,4 +13,3 @@ manager.update()
 for device in manager.outlets:
     device.display()
     print("--------------------------------------")
-    
