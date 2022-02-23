@@ -4,7 +4,8 @@ ENV TZ=America/New_York
 
 RUN \
     pip install requests \
-    && pip install pyvesync
+    && pip install pyvesync \
+    && pip cache purge
 
 RUN mkdir /app
 COPY ./plugmon.py /app
