@@ -16,6 +16,6 @@ RUN chmod 755 /app/plugmon.py
 RUN chmod 755 /app/finduuid.py
 
 HEALTHCHECK --interval=5m --timeout=10s --retries=3 \
-    CMD /bin/curl -f https://smartapi.vesync.com/cloud/v1 || exit 1
+    CMD /usr/bin/curl -f https://smartapi.vesync.com/cloud/v1 || exit 1
 
 ENTRYPOINT [ "python3", "-u", "/app/plugmon.py" ]
