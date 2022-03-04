@@ -2,7 +2,7 @@ FROM python:slim
 
 ENV TZ=America/New_York
 
-RUN apt update && apt -yq install curl
+RUN apt update && apt -yq install netcat
 
 RUN \
     pip install requests \
@@ -15,7 +15,7 @@ COPY ./finduuid.py /app
 RUN chmod 755 /app/plugmon.py
 RUN chmod 755 /app/finduuid.py
 
-HEALTHCHECK --interval=5m --timeout=10s --retries=3 \
-    CMD /usr/bin/curl -f https://smartapi.vesync.com/cloud/v1 || exit 1
+HEALTHCHECK --interval=1m --timeout=10s --retries=3 \
+    CMD [ "/bin/nc", "-z", "smartapi.vesync.com", "443" ] || exit 1
 
 ENTRYPOINT [ "python3", "-u", "/app/plugmon.py" ]
