@@ -6,6 +6,7 @@ import requests
 import random
 import hashlib
 import json
+import telegram
 
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
@@ -14,25 +15,19 @@ TZ = os.getenv('TZ', 'America/New_York')
 UUID = os.getenv('UUID')
 OFFPOWER = float(os.getenv('OFFPOWER', 1.2))
 ONPOWER = float(os.getenv('ONPOWER', 3.0))
-IFTTTKEY = os.getenv('IFTTTKEY')
-IFTTTWEBHOOK = os.getenv('IFTTTWEBHOOK')
 INTERVAL = os.getenv('INTERVAL', 300)
 TRACEID = str(random.uniform(1, 1000000000))
+CHATID = int(os.getenv('CHATID'))
+MYTOKEN = os.getenv('MYTOKEN')
 
-VER = "2.8.1"
+VER = "3.0"
 USER_AGENT = "plugmon.py/" + VER
 
 
-def triggerWebHook():
-    webHookURL = "/".join(
-        ("https://maker.ifttt.com/trigger",
-         IFTTTWEBHOOK,
-         "with/key",
-         IFTTTKEY)
-    )
-    headers = {'User-Agent': USER_AGENT}
-    r = requests.get(webHookURL, headers=headers)
-    writeLogEntry("IFTTT Response", r.text)
+def sendNotification(msg, chat_id, token):
+    bot = telegram.Bot(token=token)
+    bot.sendMessage(chat_id=chat_id, text=msg)
+    writeLogEntry("Telegram Group Message Sent", "")
 
 
 def writeLogEntry(message, status):
@@ -121,7 +116,8 @@ def main():
             if mysw_power < OFFPOWER:
                 writeLogEntry('Washer changed from running to stopped',
                               mysw_power)
-                triggerWebHook()
+                notificationText = "Washer finished on " + time.strftime("%B %d, %Y at %H:%M") + ". Go switch out the laundry!"  # noqa: E501
+                sendNotification(notificationText, CHATID, MYTOKEN)
                 IS_RUNNING = 0
             else:
                 writeLogEntry('Washer remains running', mysw_power)

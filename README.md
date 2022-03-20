@@ -1,10 +1,6 @@
 # plugmon
 
-[![Docker Stars](https://img.shields.io/docker/stars/jcostom/plugmon.svg)](https://hub.docker.com/r/jcostom/plugmon/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/jcostom/plugmon.svg)](https://hub.docker.com/r/jcostom/plugmon/)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon?ref=badge_shield)
-
-Lightweight python-based monitoring Etekcity Smart Plug via the VeSync API and activating an IFTTT webhook that triggers sending a Telegram message. Now enabled for Docker Hub security vulnerability scanning!
+Lightweight python-based monitoring Etekcity Smart Plug via the VeSync API that fires of a Telegram message when power use drops below a certain level. As of v3.0 removes the dependency on IFTTT!
 
 ## Pull the image
 
@@ -27,7 +23,7 @@ docker run \
 
 ## Run the container
 
-Sort out your optional parameters (the ENV vars), and you're off to the races...
+Sort out your optional parameters (the ENV vars), and you're off to the races... You'll need to find your Telegram Chat ID and Bot Token on your own. Those are outside the scope of this document. If you're this far, you should be able to work that out though!
 
 ```bash
 docker run -d \
@@ -38,8 +34,8 @@ docker run -d \
     -e PASSWORD='Your VeSync Password' \
     -e TZ='America/New_York' \
     -e UUID='UUID of Your Plug Device' \
-    -e IFTTTKEY='Your IFTTT Webhook Key' \
-    -e IFTTTWEBHOOK='Your IFTTT Webhook Name' \
+    -e CHATID=TELEGRAM-CHAT-ID-VALUE \
+    -e MYTOKEN=TELEGRAM-BOT-TOKEN-VALUE \
     -e OFFPOWER=1.2 \
     -e ONPOWER=3.0 \
     jcostom/plugmon
@@ -61,10 +57,6 @@ As of version 2.0, there's no more fooling around with DEVID or DEVNAME variable
 | UUID | [EMPTY] | YES! |
 | OFFPOWER | 1.2 | NO |
 | ONPOWER | 3.0 | NO |
-| IFTTTKEY | [EMPTY] | YES! |
-| IFTTTWEBHOOK | [EMPTY] | YES! |
+| CHATID | [EMPTY] | YES! |
+| MYTOKEN | [EMPTY] | YES! |
 | INTERVAL (in seconds) | 300 | NO |
-
-## License
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjcostom%2Fplugmon?ref=badge_large)

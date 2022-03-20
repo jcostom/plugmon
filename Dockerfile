@@ -7,6 +7,7 @@ RUN apt update && apt -yq install netcat
 RUN \
     pip install requests \
     && pip install pyvesync \
+    && pip install python-telegram-bot \
     && pip cache purge
 
 RUN mkdir /app
