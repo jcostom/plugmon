@@ -116,7 +116,11 @@ def main():
             if mysw_power < OFFPOWER:
                 writeLogEntry('Washer changed from running to stopped',
                               mysw_power)
-                notificationText = "Washer finished on " + time.strftime("%B %d, %Y at %H:%M") + ". Go switch out the laundry!"  # noqa: E501
+                notificationText = "".join(
+                    ("Dryer finished on ",
+                     time.strftime("%B %d, %Y at %H:%M"),
+                     ". Go switch out the laundry!")
+                )
                 sendNotification(notificationText, CHATID, MYTOKEN)
                 IS_RUNNING = 0
             else:
