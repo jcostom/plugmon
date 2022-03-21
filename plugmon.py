@@ -20,7 +20,7 @@ TRACEID = str(random.uniform(1, 1000000000))
 CHATID = int(os.getenv('CHATID'))
 MYTOKEN = os.getenv('MYTOKEN')
 
-VER = "3.0"
+VER = "3.0.1"
 USER_AGENT = "plugmon.py/" + VER
 
 
