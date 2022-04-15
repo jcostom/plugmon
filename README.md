@@ -47,6 +47,8 @@ The OFFPOWER and ONPOWER values are the high and low watermarks in Watts to acti
 
 As of version 2.0, there's no more fooling around with DEVID or DEVNAME variables, which are too easy to change and break your monitoring app. As of 2.0, we rely on the device UUID. See above for how to locate the UUID you want.
 
+As of version 3.2, I've moved away from print() for log messages and now use the Python logging module. If you want more logs to troubleshoot stuff, set the DEBUG variable to 1. It defaults to 0.
+
 ## Available Parameters
 
 | Variable | Default Value | Required to Launch? |
@@ -60,3 +62,4 @@ As of version 2.0, there's no more fooling around with DEVID or DEVNAME variable
 | CHATID | [EMPTY] | YES! |
 | MYTOKEN | [EMPTY] | YES! |
 | INTERVAL (in seconds) | 300 | NO |
+| DEBUG | 0 | NO |
