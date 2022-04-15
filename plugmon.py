@@ -5,6 +5,7 @@ import time
 import requests
 import random
 import hashlib
+import logging
 import json
 import telegram
 
@@ -19,20 +20,31 @@ INTERVAL = os.getenv('INTERVAL', 300)
 TRACEID = str(random.uniform(1, 1000000000))
 CHATID = int(os.getenv('CHATID'))
 MYTOKEN = os.getenv('MYTOKEN')
+DEBUG = int(os.getenv('DEBUG', 0))
 
-VER = "3.1"
+VER = "3.2"
 USER_AGENT = "plugmon.py/" + VER
+
+# Setup logger
+logger = logging.getLogger()
+ch = logging.StreamHandler()
+if DEBUG:
+    logger.setLevel(logging.DEBUG)
+    ch.setLevel(logging.DEBUG)
+else:
+    logger.setLevel(logging.INFO)
+    ch.setLevel(logging.INFO)
+
+formatter = logging.Formatter('[%(levelname)s] %(asctime)s %(message)s',
+                              datefmt='[%d %b %Y %H:%M:%S %Z]')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 
 def sendNotification(msg, chat_id, token):
     bot = telegram.Bot(token=token)
     bot.sendMessage(chat_id=chat_id, text=msg)
-    writeLogEntry("Telegram Group Message Sent", "")
-
-
-def writeLogEntry(message, status):
-    print(time.strftime("[%d %b %Y %H:%M:%S %Z]",
-          time.localtime()) + " {}: {}".format(message, status))
+    logger.info('Telegram Group Message Sent')
 
 
 def loginAPI(email, md5pass, tz, traceid):
@@ -70,11 +82,11 @@ def turnSwitchOn(accountID, token, tz, traceid):
     }
     r = requests.put(url, headers=headers, data=json.dumps(body))
     if r.json()['code'] == 0:
-        writeLogEntry('Plug turned on', '')
+        logger.info("Plug turned on.")
 
 
 def main():
-    writeLogEntry('Initiated', '')
+    logger.info(f"Initiated: {USER_AGENT}")
     [ACCOUNTID, TOKEN] = loginAPI(EMAIL, MD5PASSWORD, TZ, TRACEID)
 
     # Make sure the switch is on!
@@ -107,15 +119,13 @@ def main():
         mysw_power = float(r.json()['power'])
         if IS_RUNNING == 0:
             if mysw_power > ONPOWER:
-                writeLogEntry('Washer changed from stopped to running',
-                              mysw_power)
+                logger.info(f"Washer changed from stopped to running: {mysw_power}")  # noqa: E501
                 IS_RUNNING = 1
             else:
-                writeLogEntry('Washer remains stopped', mysw_power)
+                logger.info(f"Washer remains stopped: {mysw_power}")
         else:
             if mysw_power < OFFPOWER:
-                writeLogEntry('Washer changed from running to stopped',
-                              mysw_power)
+                logger.info(f"Washer changed from running to stopped: {mysw_power}")  # noqa: E501
                 notificationText = "".join(
                     ("Washer finished on ",
                      time.strftime("%B %d, %Y at %H:%M"),
@@ -124,7 +134,7 @@ def main():
                 sendNotification(notificationText, CHATID, MYTOKEN)
                 IS_RUNNING = 0
             else:
-                writeLogEntry('Washer remains running', mysw_power)
+                logger.info(f"Washer remains running: {mysw_power}")
 
         time.sleep(INTERVAL)
 
