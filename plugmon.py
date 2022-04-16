@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-import time
+from time import sleep, strftime
 import requests
 import random
 import hashlib
@@ -22,8 +22,8 @@ CHATID = int(os.getenv('CHATID'))
 MYTOKEN = os.getenv('MYTOKEN')
 DEBUG = int(os.getenv('DEBUG', 0))
 
-VER = "3.2"
-USER_AGENT = "plugmon.py/" + VER
+VER = "3.3"
+USER_AGENT = f"plugmon.py/{VER}"
 
 # Setup logger
 logger = logging.getLogger()
@@ -41,13 +41,13 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def sendNotification(msg, chat_id, token):
+def send_notification(msg, chat_id, token):
     bot = telegram.Bot(token=token)
     bot.sendMessage(chat_id=chat_id, text=msg)
     logger.info('Telegram Group Message Sent')
 
 
-def loginAPI(email, md5pass, tz, traceid):
+def login_api(email, md5pass, tz, traceid):
     headers = {'Content-Type': 'application/json', 'User-Agent': USER_AGENT}
     body = {
         "timeZone": tz,
@@ -64,12 +64,12 @@ def loginAPI(email, md5pass, tz, traceid):
     }
     url = "https://smartapi.vesync.com/cloud/v1/user/login"
     r = requests.post(url, headers=headers, json=body)
-    accountID = r.json()['result']['accountID']
+    account_id = r.json()['result']['accountID']
     token = r.json()['result']['token']
-    return([accountID, token])
+    return([account_id, token])
 
 
-def turnSwitchOn(accountID, token, tz, traceid):
+def turn_switch_on(accountID, token, tz, traceid):
     url = "https://smartapi.vesync.com/10a/v1/device/devicestatus"
     headers = {'Content-Type': 'application/json', 'User-Agent': USER_AGENT}
     body = {
@@ -87,10 +87,10 @@ def turnSwitchOn(accountID, token, tz, traceid):
 
 def main():
     logger.info(f"Initiated: {USER_AGENT}")
-    [ACCOUNTID, TOKEN] = loginAPI(EMAIL, MD5PASSWORD, TZ, TRACEID)
+    [ACCOUNTID, TOKEN] = login_api(EMAIL, MD5PASSWORD, TZ, TRACEID)
 
     # Make sure the switch is on!
-    turnSwitchOn(ACCOUNTID, TOKEN, TZ, TRACEID)
+    turn_switch_on(ACCOUNTID, TOKEN, TZ, TRACEID)
 
     IS_RUNNING = 0
 
@@ -108,11 +108,7 @@ def main():
         'traceid': TRACEID
     }
 
-    url = "/".join(
-        ("https://smartapi.vesync.com/v1/device",
-         UUID,
-         "detail")
-    )
+    url = f"https://smartapi.vesync.com/v1/device/{UUID}/detail"
 
     while True:
         r = requests.get(url, headers=headers)
@@ -128,15 +124,15 @@ def main():
                 logger.info(f"Washer changed from running to stopped: {mysw_power}")  # noqa: E501
                 notificationText = "".join(
                     ("Washer finished on ",
-                     time.strftime("%B %d, %Y at %H:%M"),
+                     strftime("%B %d, %Y at %H:%M"),
                      ". Go switch out the laundry!")
                 )
-                sendNotification(notificationText, CHATID, MYTOKEN)
+                send_notification(notificationText, CHATID, MYTOKEN)
                 IS_RUNNING = 0
             else:
                 logger.info(f"Washer remains running: {mysw_power}")
 
-        time.sleep(INTERVAL)
+        sleep(INTERVAL)
 
 
 if __name__ == "__main__":
