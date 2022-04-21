@@ -22,7 +22,7 @@ CHATID = int(os.getenv('CHATID'))
 MYTOKEN = os.getenv('MYTOKEN')
 DEBUG = int(os.getenv('DEBUG', 0))
 
-VER = "3.4.1"
+VER = "3.4.2"
 USER_AGENT = f"plugmon.py/{VER}"
 
 # Setup logger
