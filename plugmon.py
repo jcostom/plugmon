@@ -9,20 +9,26 @@ import logging
 import json
 import telegram
 
+# --- To be passed in to container ---
+# Mandatory vars
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
-MD5PASSWORD = hashlib.md5(PASSWORD.encode('utf-8')).hexdigest()
 TZ = os.getenv('TZ', 'America/New_York')
 UUID = os.getenv('UUID')
 OFFPOWER = float(os.getenv('OFFPOWER', 1.2))
 ONPOWER = float(os.getenv('ONPOWER', 3.0))
 INTERVAL = os.getenv('INTERVAL', 300)
-TRACEID = str(random.uniform(1, 1000000000))
 CHATID = int(os.getenv('CHATID'))
 MYTOKEN = os.getenv('MYTOKEN')
+
+# Optional Vars
 DEBUG = int(os.getenv('DEBUG', 0))
 
-VER = "3.4.2"
+# --- Other Globals ---
+TRACEID = str(random.uniform(1, 1000000000))
+MD5PASSWORD = hashlib.md5(PASSWORD.encode('utf-8')).hexdigest()
+
+VER = "3.5"
 USER_AGENT = f"plugmon.py/{VER}"
 
 # Setup logger
@@ -41,19 +47,19 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def send_notification(msg, chat_id, token):
+def send_notification(msg: str, chat_id: int, token: str) -> None:
     bot = telegram.Bot(token=token)
     bot.sendMessage(chat_id=chat_id, text=msg)
     logger.info('Telegram Group Message Sent')
 
 
-def login_api(email, md5pass, tz, traceid):
+def login_api(email: str, md5pass: str, time_zone: str, trace_id: str) -> list:
     headers = {'Content-Type': 'application/json', 'User-Agent': USER_AGENT}
     body = {
-        "timeZone": tz,
+        "timeZone": time_zone,
         "acceptLanguage": "en",
         "appVersion": VER,
-        "traceId": traceid,
+        "traceId": trace_id,
         "phoneBrand": "HappyFunBall",
         "phoneOS": "HappyFunOS",
         "email": email,
@@ -69,28 +75,32 @@ def login_api(email, md5pass, tz, traceid):
     return([account_id, token])
 
 
-def turn_switch_on(accountID, token, tz, traceid):
+def turn_switch_on(account_id: str, token: str, time_zone: str, trace_id: str) -> None:  # noqa: E501
     url = "https://smartapi.vesync.com/10a/v1/device/devicestatus"
     headers = {'Content-Type': 'application/json', 'User-Agent': USER_AGENT}
     body = {
-       'accountID': accountID,
-       'timeZone': tz,
+       'accountID': account_id,
+       'timeZone': time_zone,
        'token': token,
        'status': 'on',
        'uuid': UUID,
-       'traceId': traceid
+       'traceId': trace_id
     }
     r = requests.put(url, headers=headers, data=json.dumps(body))
     if r.json()['code'] == 0:
         logger.info("Plug turned on.")
+        return True
+    else:
+        logger.info("FATAL: Plug wouldn't turn on!")
+        raise SystemExit("Plug did not turn on, exiting.")
 
 
-def main():
+def main() -> None:
     logger.info(f"Initiated: {USER_AGENT}")
-    [ACCOUNTID, TOKEN] = login_api(EMAIL, MD5PASSWORD, TZ, TRACEID)
+    [account_id, token] = login_api(EMAIL, MD5PASSWORD, TZ, TRACEID)
 
     # Make sure the switch is on!
-    turn_switch_on(ACCOUNTID, TOKEN, TZ, TRACEID)
+    turn_switch_on(account_id, token, TZ, TRACEID)
 
     IS_RUNNING = 0
 
@@ -101,9 +111,9 @@ def main():
         'Accept': '*/*',
         'Connection': 'keep-alive',
         'Accept-Language': 'en',
-        'accountId': ACCOUNTID,
+        'accountId': account_id,
         'appVersion': VER,
-        'tk': TOKEN,
+        'tk': token,
         'tz': TZ,
         'traceid': TRACEID
     }
@@ -122,12 +132,9 @@ def main():
         else:
             if mysw_power < OFFPOWER:
                 logger.info(f"Washer changed from running to stopped: {mysw_power}")  # noqa: E501
-                notificationText = "".join(
-                    ("Washer finished on ",
-                     strftime("%B %d, %Y at %H:%M"),
-                     ". Go switch out the laundry!")
-                )
-                send_notification(notificationText, CHATID, MYTOKEN)
+                now = strftime("%B %d, %Y at %H:%M")
+                notification_text = f"Washer finished on {now}. Go switch out the laundry!"  # noqa: E501
+                send_notification(notification_text, CHATID, MYTOKEN)
                 IS_RUNNING = 0
             else:
                 logger.info(f"Washer remains running: {mysw_power}")
