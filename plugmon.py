@@ -28,7 +28,7 @@ DEBUG = int(os.getenv('DEBUG', 0))
 TRACEID = str(random.uniform(1, 1000000000))
 MD5PASSWORD = hashlib.md5(PASSWORD.encode('utf-8')).hexdigest()
 
-VER = "3.5"
+VER = "3.5.1"
 USER_AGENT = f"plugmon.py/{VER}"
 
 # Setup logger
@@ -102,7 +102,7 @@ def main() -> None:
     # Make sure the switch is on!
     turn_switch_on(account_id, token, TZ, TRACEID)
 
-    IS_RUNNING = 0
+    is_running = 0
 
     headers = {
         'Content-Type': 'application/json',
@@ -123,10 +123,10 @@ def main() -> None:
     while True:
         r = requests.get(url, headers=headers)
         mysw_power = float(r.json()['power'])
-        if IS_RUNNING == 0:
+        if is_running == 0:
             if mysw_power > ONPOWER:
                 logger.info(f"Washer changed from stopped to running: {mysw_power}")  # noqa: E501
-                IS_RUNNING = 1
+                is_running = 1
             else:
                 logger.info(f"Washer remains stopped: {mysw_power}")
         else:
@@ -135,7 +135,7 @@ def main() -> None:
                 now = strftime("%B %d, %Y at %H:%M")
                 notification_text = f"Washer finished on {now}. Go switch out the laundry!"  # noqa: E501
                 send_notification(notification_text, CHATID, MYTOKEN)
-                IS_RUNNING = 0
+                is_running = 0
             else:
                 logger.info(f"Washer remains running: {mysw_power}")
 
