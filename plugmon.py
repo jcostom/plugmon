@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import asyncio
 import os
 from time import sleep, strftime
 import requests
@@ -28,7 +29,7 @@ DEBUG = int(os.getenv('DEBUG', 0))
 TRACEID = str(random.uniform(1, 1000000000))
 MD5PASSWORD = hashlib.md5(PASSWORD.encode('utf-8')).hexdigest()
 
-VER = "3.6.4"
+VER = "3.7"
 USER_AGENT = f"plugmon.py/{VER}"
 
 # Setup logger
@@ -47,9 +48,9 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def send_notification(msg: str, chat_id: int, token: str) -> None:
+async def send_notification(msg: str, chat_id: int, token: str) -> None:
     bot = telegram.Bot(token=token)
-    bot.sendMessage(chat_id=chat_id, text=msg)
+    await bot.send_message(chat_id=chat_id, text=msg)
     logger.info('Telegram Group Message Sent')
 
 
@@ -72,7 +73,7 @@ def login_api(email: str, md5pass: str, time_zone: str, trace_id: str) -> list:
     r = requests.post(url, headers=headers, json=body)
     account_id = r.json()['result']['accountID']
     token = r.json()['result']['token']
-    return([account_id, token])
+    return [account_id, token]
 
 
 def turn_switch_on(account_id: str, token: str, time_zone: str, trace_id: str) -> None:  # noqa: E501
@@ -134,7 +135,7 @@ def main() -> None:
                 logger.info(f"Washer changed from running to stopped: {mysw_power}")  # noqa: E501
                 now = strftime("%B %d, %Y at %H:%M")
                 notification_text = f"Washer finished on {now}. Go switch out the laundry!"  # noqa: E501
-                send_notification(notification_text, CHATID, MYTOKEN)
+                asyncio.run(send_notification(notification_text, CHATID, MYTOKEN))  # noqa: E501
                 is_running = 0
             else:
                 logger.info(f"Washer remains running: {mysw_power}")
