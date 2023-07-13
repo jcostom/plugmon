@@ -29,23 +29,15 @@ DEBUG = int(os.getenv('DEBUG', 0))
 TRACEID = str(random.uniform(1, 1000000000))
 MD5PASSWORD = hashlib.md5(PASSWORD.encode('utf-8')).hexdigest()
 
-VER = "3.7.4"
+VER = "3.8"
 USER_AGENT = f"plugmon.py/{VER}"
 
 # Setup logger
+LOG_LEVEL = 'DEBUG' if DEBUG else 'INFO'
+logging.basicConfig(level=LOG_LEVEL,
+                    format='[%(levelname)s] %(asctime)s %(message)s',
+                    datefmt='[%d %b %Y %H:%M:%S %Z]')
 logger = logging.getLogger()
-ch = logging.StreamHandler()
-if DEBUG:
-    logger.setLevel(logging.DEBUG)
-    ch.setLevel(logging.DEBUG)
-else:
-    logger.setLevel(logging.INFO)
-    ch.setLevel(logging.INFO)
-
-formatter = logging.Formatter('[%(levelname)s] %(asctime)s %(message)s',
-                              datefmt='[%d %b %Y %H:%M:%S %Z]')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
 
 
 async def send_notification(msg: str, chat_id: int, token: str) -> None:
