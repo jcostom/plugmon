@@ -29,7 +29,7 @@ DEBUG = int(os.getenv('DEBUG', 0))
 TRACEID = str(random.uniform(1, 1000000000))
 MD5PASSWORD = hashlib.md5(PASSWORD.encode('utf-8')).hexdigest()
 
-VER = '3.8.5'
+VER = '3.8.6'
 USER_AGENT = f"plugmon.py/{VER}"
 
 # Setup logger
