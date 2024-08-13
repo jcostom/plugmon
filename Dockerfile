@@ -1,4 +1,4 @@
-FROM python:3.12.4-slim-bookworm AS builder
+FROM python:3.12.5-slim-bookworm AS builder
 
 ARG TZ=America/New_York
 
@@ -9,7 +9,7 @@ RUN \
     && pip install python-telegram-bot \
     && pip cache purge
 
-FROM python:3.12.4-slim-bookworm
+FROM python:3.12.5-slim-bookworm
 
 ARG TZ=America/New_York
 ARG PYVER=3.12
